@@ -1,5 +1,6 @@
 var Web3 = require("web3");
 var abi = require('./abi.json');
+const { clear } = require("console");
 // var fs = require("fs")
 
 const web3 = new Web3('https://mainnet.infura.io/v3/abeaf693685a48d78fc05331f9eee8d8');
@@ -12,10 +13,11 @@ async function stakers(web3) {
   const ABI = abi.abi;
   var tokenStakeContract = new web3.eth.Contract(ABI, '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46');
 
+  console.log('Script Starting... Get all the stakers...');
   let stakers = await tokenStakeContract.methods.getStakeHolders().call();
 
-  console.log('Staker records -- ', stakers.length)
-
+  
+  /* get all data about each staker */
   for (let i = 0; i < stakers.length; i++) {
     let staker = await tokenStakeContract.methods.getStakeInfo(34, stakers[i]).call();
     let approvedAmount = Number(staker.approvedAmount);
@@ -28,48 +30,64 @@ async function stakers(web3) {
       stakersVALUE += 1;
     }
     claimableAmountVALUE += claimableAmount;
-    console.log(i, '/', stakers.length)
+
+
+
+    /* processing indicator */
+    clear();
+    // console.log(i, '/', stakers.length);
+    let percent = (i/stakers.length) * 100;
+    console.log('Processing:', percent.toFixed(2), '%');
   }
 
-  console.log('==================================================================================')
+  console.log('[INFO] Processing has been completed!');
+  console.log('Processed:', stakers.length, 'records');
+  console.log('-----------------RESULTS---------------');
+  console.log('---------------------------------------');
   console.log('Stakers:', stakersVALUE);
+  console.log('-----staking above current window------');
   console.log('approvedAmount:', approvedAmountVALUE);
-  console.log('------------------------staking in current window---------------------------------');
+  console.log('---------------------------------------');
+  console.log('------staking in current window--------');
   console.log('pendingForApprovalAmount:', pendingApprovedAmountVALUE);
-  console.log('----------------------------------------------------------------------------------');
-  console.log('claimableAmount:', claimableAmountVALUE)
+  console.log('---------------------------------------');
+  console.log('--total staked fund in current window--');
+  console.log('total:', approvedAmountVALUE + pendingApprovedAmountVALUE);
+  console.log('---------------------------------------');
+  console.log('-------funds ready for withdrawal------');
+  console.log('claimableAmount:', claimableAmountVALUE);
+  console.log('---------------------------------------');
 }
-
 stakers(web3);
 
 
 
-
-async function getStakers(web3) {
-
+/* get all staked value of AGIX Tokens */
+async function getStakedAmount(web3) {
   const ABI = abi.abi;
-
   var tokenStakeContract = new web3.eth.Contract(ABI, '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46');
+  let amount = await tokenStakeContract.methods.windowTotalStake().call();
+  console.log('Total Staked Amount --', amount)
+}
+// getStakedAmount(web3);
 
+
+
+
+/* function for get all stakers list */
+async function getStakers(web3) {
+  const ABI = abi.abi;
+  var tokenStakeContract = new web3.eth.Contract(ABI, '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46');
   const result = await tokenStakeContract.methods.getStakeHolders().call();
-  // 
-  // 0xcb97b934bc15b74b24c2bbbcba73607ce111a41b
-  // 0x2799Aa9a16592847Fe8314fd6072A516402557ea
-
-  // 0xf60fe344c3ffc3e233818f07af31c4aa07379cdb
-
   console.log("getStakeHolders result -- ", result);
-
-  // let test = await tokenStakeContract.methods.getStakeInfo(34, '0xf60fe344c3ffc3e233818f07af31c4aa07379cdb').call();
-  /* let staker = await tokenStakeContract.methods.getStakeInfo(34, '0xf60fe344c3ffc3e233818f07af31c4aa07379cdb').call();
-
-  */
-
   return result;
 }
-
 // getStakers(web3);
 
+
+
+
+/* function for get value of AGIX tokens ready for claim */
 async function claimable(web3) {
   
   let amount = 0;
@@ -87,11 +105,19 @@ async function claimable(web3) {
     console.log(i, amount)
   }
 
-  console.log('total pendingForApprovalAmount -- ', amount)
-
-  //const bigIntVal = Number(staker.pendingForApprovalAmount);
-  //console.log(bigIntVal);
+  console.log('total claimableAmount --', amount)
 }
+// claimable(web3);
+
+
+
+
+
+
+
+//const bigIntVal = Number(staker.pendingForApprovalAmount);
+  //console.log(bigIntVal);
+
 
 // claimable(web3);
 
