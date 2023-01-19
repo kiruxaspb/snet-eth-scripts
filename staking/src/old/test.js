@@ -1,5 +1,5 @@
 const { ethers } = require("ethers");
-const ABI = require("./abi.json");
+const ABI = require("../abi.json");
 var url = 'https://mainnet.infura.io/v3/abeaf693685a48d78fc05331f9eee8d8';
 var customHttpProvider = new ethers.providers.JsonRpcProvider(url);
 customHttpProvider.getBlockNumber().then((result) => {

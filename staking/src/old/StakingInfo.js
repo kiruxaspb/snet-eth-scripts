@@ -1,5 +1,5 @@
 var Web3 = require("web3");
-var abi = require('./abi.json');
+var abi = require('../smart/abi.json');
 const { clear } = require("console");
 // var fs = require("fs")
 
