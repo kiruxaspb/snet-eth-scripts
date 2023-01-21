@@ -48,15 +48,16 @@ async function getStakeInfo(web3) {
   console.log('Processing has been completed!\n');
 
 
-  console.log('--------------------------RESULTS------------------------');
+  console.log('----------------------------------------------------------');
   console.log('Stake window index:', stakeIndex);
   console.log('Staker records:', stakers.length);
   console.log('Active stakers:', stakersVALUE);
-  console.log('Staked above current window', approvedAmountVALUE);
-  console.log('Staked in current window', pendingApprovedAmountVALUE);
+  console.log('Staked above current window:', approvedAmountVALUE);
+  console.log('Staked in current window:', pendingApprovedAmountVALUE);
   console.log('Total staked fund in current window', approvedAmountVALUE + pendingApprovedAmountVALUE);
-  console.log('Total staked in current window after distribution reward', Number(totalStaked));
-  console.log('Funds ready for withdrawal', claimableAmountVALUE);
+  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked));
+  console.log('Funds requested for withdrawal:', claimableAmountVALUE);
+  console.log('----------------------------------------------------------\n');
 }
 getStakeInfo(web3);
 
