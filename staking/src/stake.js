@@ -3,7 +3,7 @@ const { clear } = require("console");
 const abi = require('./smart/abi.json');
 
 
-const web3 = new Web3('https://mainnet.infura.io/v3/abeaf693685a48d78fc05331f9eee8d8');
+const web3 = new Web3('https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f');
 const stakeAddress = '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46';
 const ABI = abi.abi;
 
@@ -16,7 +16,7 @@ async function getStakeInfo(web3) {
   let claimableAmountVALUE = 0;
 
   console.log('[ START SCRIPT ]');
-  console.log('[INFO] Getting data');
+  console.log('Getting data...');
   let stakers = await getStakers(web3);
   let stakeIndex = await getCurrentStakeIndex(web3);
   let totalStaked = await getStakedAmount(web3);
@@ -27,36 +27,35 @@ async function getStakeInfo(web3) {
     let staker = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
     let approvedAmount = Number(staker.approvedAmount);
     let pendingApprovedAmount = Number(staker.pendingForApprovalAmount);
-    let claimableAmount = Number(staker.claimableAmount);
+    // let claimableAmount = Number(staker.claimableAmount);
 
     if (pendingApprovedAmount > 0 || approvedAmount > 0) {
       approvedAmountVALUE += approvedAmount;
       pendingApprovedAmountVALUE += pendingApprovedAmount;
       stakersVALUE += 1;
     }
-    claimableAmountVALUE += claimableAmount;
 
-
+    // claimableAmountVALUE += claimableAmount;
 
 
     /* processing indicator */
     clear();
-    let percent = (i/stakers.length) * 100;
+    let percent = (i/stakers.length-1) * 100;
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
-  console.log('Processing has been completed!\n');
+  console.log('\nProcessing has been completed!\n');
 
 
   console.log('----------------------------------------------------------');
   console.log('Stake window index:', stakeIndex);
   console.log('Staker records:', stakers.length);
   console.log('Active stakers:', stakersVALUE);
-  console.log('Staked above current window:', approvedAmountVALUE);
-  console.log('Staked in current window:', pendingApprovedAmountVALUE);
-  console.log('Total staked fund in current window', approvedAmountVALUE + pendingApprovedAmountVALUE);
-  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked));
-  console.log('Funds requested for withdrawal:', claimableAmountVALUE);
+  console.log('Staked above current window:', approvedAmountVALUE)/100000000;
+  console.log('Staked in current window:', pendingApprovedAmountVALUE/100000000);
+  console.log('Total staked fund in current window', (approvedAmountVALUE + pendingApprovedAmountVALUE)/100000000);
+  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked)/100000000);
+  // console.log('Funds requested for withdrawal:', claimableAmountVALUE);
   console.log('----------------------------------------------------------\n');
 }
 getStakeInfo(web3);

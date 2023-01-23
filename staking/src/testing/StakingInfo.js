@@ -3,7 +3,7 @@ var abi = require('../smart/abi.json');
 const { clear } = require("console");
 // var fs = require("fs")
 
-const web3 = new Web3('https://mainnet.infura.io/v3/abeaf693685a48d78fc05331f9eee8d8');
+const web3 = new Web3('https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f');
 
 async function stakers(web3) {
   let stakersVALUE = 0;
