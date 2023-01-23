@@ -2,25 +2,28 @@ const Web3 = require("web3");
 const { clear } = require("console");
 const abi = require('./smart/abi.json');
 
-
 const web3 = new Web3('https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f');
 const stakeAddress = '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46';
 const ABI = abi.abi;
-
 const tokenStakeContract = new web3.eth.Contract(ABI, stakeAddress);
+
+
+async function main() {
+  console.log('[ START SCRIPT ]');
+  getStakeInfo(web3);
+}
+
 
 async function getStakeInfo(web3) {
   let stakersVALUE = 0;
   let approvedAmountVALUE = 0;
   let pendingApprovedAmountVALUE = 0;
   let claimableAmountVALUE = 0;
-
-  console.log('[ START SCRIPT ]');
+  
   console.log('Getting data...');
   let stakers = await getStakers(web3);
   let stakeIndex = await getCurrentStakeIndex(web3);
   let totalStaked = await getStakedAmount(web3);
-
 
   /* get all data about each staker */
   for (let i = 0; i < stakers.length; i++) {
@@ -34,31 +37,27 @@ async function getStakeInfo(web3) {
       pendingApprovedAmountVALUE += pendingApprovedAmount;
       stakersVALUE += 1;
     }
-
     // claimableAmountVALUE += claimableAmount;
-
 
     /* processing indicator */
     clear();
-    let percent = (i/stakers.length-1) * 100;
+    let percent = (i/stakers.length) * 100;
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
   console.log('\nProcessing has been completed!\n');
 
-
   console.log('----------------------------------------------------------');
   console.log('Stake window index:', stakeIndex);
   console.log('Staker records:', stakers.length);
   console.log('Active stakers:', stakersVALUE);
-  console.log('Staked above current window:', approvedAmountVALUE)/100000000;
+  console.log('Staked above current window:', approvedAmountVALUE/100000000);
   console.log('Staked in current window:', pendingApprovedAmountVALUE/100000000);
   console.log('Total staked fund in current window', (approvedAmountVALUE + pendingApprovedAmountVALUE)/100000000);
   console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked)/100000000);
   // console.log('Funds requested for withdrawal:', claimableAmountVALUE);
   console.log('----------------------------------------------------------\n');
 }
-getStakeInfo(web3);
 
 
 /* function for get all stakers list */
@@ -92,3 +91,5 @@ async function getStakedAmount(web3) {
   
   return totalStakedAmount;
 }
+
+main();

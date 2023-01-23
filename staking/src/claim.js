@@ -6,36 +6,37 @@ const abi = require('./smart/abi.json');
 const web3 = new Web3('https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f');
 const stakeAddress = '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46';
 const ABI = abi.abi;
-
 const tokenStakeContract = new web3.eth.Contract(ABI, stakeAddress);
+
+
+async function main() {
+  getStakeInfo(web3);
+}
+
 
 async function getStakeInfo(web3) {
   let claimableAmountVALUE = 0;
   let stakers = await getStakers(web3);
   let stakeIndex = await getCurrentStakeIndex(web3);
   for (let i = 0; i < stakers.length; i++) {
- // 0x00d2bc61cce637D14ae4721D46500F4deA1988a6
+ 
   let stakerCheck = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
-  
     // if staker have any stake => dont search claim
-    if ( Number(stakerCheck.approvedAmount) == 0 || Number(stakerCheck.pendingForApprovalAmount) == 0) {
+    if ( Number(stakerCheck.approvedAmount) == 0 && Number(stakerCheck.pendingForApprovalAmount) == 0) {
+      // checking claimalbeAmount in every stage window
       for (let j = 0; j < stakeIndex; j++) {
         let staker = await tokenStakeContract.methods.getStakeInfo(j, stakers[i]).call();
         claimableAmountVALUE += Number(staker.claimableAmount);
-        console.log(j);
       }
     }
-    console.log('Address', stakers[i]);
-    console.log('Claimable: ', claimableAmountVALUE/100000000);
 
+    clear();
     let percent = (i/stakers.length) * 100;
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
   console.log('Total claimable tokens:', claimableAmountVALUE/100000000)
 }
-
-getStakeInfo(web3);
 
 
 /* function for get all stakers list */
@@ -69,3 +70,5 @@ async function getStakedAmount(web3) {
   
   return totalStakedAmount;
 }
+
+main();
