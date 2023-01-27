@@ -18,9 +18,9 @@ async function main() {
 
 
 async function getStakeInfo(web3) {
-  let stakersVALUE = 0;
-  let approvedAmountVALUE = 0;
-  let pendingApprovedAmountVALUE = 0;
+  let stakersValue = 0;
+  let approvedAmountValue = 0;
+  let pendingApprovedAmountValue = 0;
   
   console.log('Getting data...');
   let stakers = await getStakers(web3);
@@ -34,9 +34,9 @@ async function getStakeInfo(web3) {
     let pendingApprovedAmount = Number(staker.pendingForApprovalAmount);
 
     if (pendingApprovedAmount > 0 || approvedAmount > 0) {
-      approvedAmountVALUE += approvedAmount;
-      pendingApprovedAmountVALUE += pendingApprovedAmount;
-      stakersVALUE += 1;
+      approvedAmountValue += approvedAmount;
+      pendingApprovedAmountValue += pendingApprovedAmount;
+      stakersValue += 1;
     }
 
     /* processing indicator */
@@ -50,19 +50,18 @@ async function getStakeInfo(web3) {
   console.log('----------------------------------------------------------');
   console.log('Stake window index:', stakeIndex);
   console.log('Staker records:', stakers.length);
-  console.log('Active stakers:', stakersVALUE);
+  console.log('Active stakers:', stakersValue);
   console.log('----------------------------------------------------------');
-  console.log('Staked above current window:', approvedAmountVALUE/TOKEN_DECIMALS, 'AGIX');
-  console.log('Staked in current window:', pendingApprovedAmountVALUE/TOKEN_DECIMALS);
-  console.log('Total staked fund in current window', (approvedAmountVALUE + pendingApprovedAmountVALUE)/TOKEN_DECIMALS, 'AGIX');
-  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked)/TOKEN_DECIMALS, 'AGIX');
+  console.log('Staked above current window:', approvedAmountValue / TOKEN_DECIMALS, 'AGIX');
+  console.log('Staked in current window:', pendingApprovedAmountValue / TOKEN_DECIMALS);
+  console.log('Total staked fund in current window', (approvedAmountValue + pendingApprovedAmountValue) / TOKEN_DECIMALS, 'AGIX');
+  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked) / TOKEN_DECIMALS, 'AGIX');
   console.log('----------------------------------------------------------\n');
 }
 
 
 /* function for get all stakers list */
 async function getStakers(web3) {
-  var tokenStakeContract = new web3.eth.Contract(ABI, STAKE_CONTRACT_ADDRESS_MAINNET);
   const stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
 
   console.log("Staker records:", stakeHolders.length);
@@ -83,8 +82,6 @@ async function getCurrentStakeIndex(web3) {
 
 /* get all staked value of AGIX Tokens */
 async function getStakedAmount(web3) {
-  const ABI = abi.abi;
-  var tokenStakeContract = new web3.eth.Contract(ABI, STAKE_CONTRACT_ADDRESS_MAINNET);
   let totalStakedAmount = await tokenStakeContract.methods.windowTotalStake().call();
 
   console.log("Total staked:", totalStakedAmount);

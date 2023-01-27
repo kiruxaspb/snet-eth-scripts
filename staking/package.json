@@ -1,11 +1,12 @@
 {
   "name": "scripts",
-  "version": "2.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "stake": "node ./src/stake.js",
-    "claim": "node ./src/claim.js",
+    "claim": "node ./src/claimTotal.js",
+    "currentClaim": "node ./src/currentClaimable.js",
     "gas": "node ./src/gasTracker.js"
   },
   "author": "",
