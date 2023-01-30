@@ -1,6 +1,6 @@
 {
   "name": "scripts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,8 @@
     "currentClaim": "node ./src/currentClaimable.js",
     "gas": "node ./src/gasTracker.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "https://github.com/kiruxaspb",
+  "license": "MIT",
   "dependencies": {
     "web3": "^1.8.1"
   }

@@ -11,11 +11,11 @@ const tokenStakeContract = new web3.eth.Contract(ABI, config.STAKE_CONTRACT_ADDR
 
 async function main() {
   console.log('[ START SCRIPT ]');
-  getStakeInfo(web3);
+  stakeInfo(web3);
 }
 
 
-async function getStakeInfo(web3) {
+async function stakeInfo(web3) {
   let stakersValue = 0;
   let approvedAmountValue = 0;
   let pendingApprovedAmountValue = 0;
@@ -60,7 +60,7 @@ async function getStakeInfo(web3) {
 
 /* function for get all stakers list */
 async function getStakers(web3) {
-  const stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
+  let stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
 
   console.log("Staker records:", stakeHolders.length);
 
@@ -70,7 +70,7 @@ async function getStakers(web3) {
 
 /* function for get value of current stake index */
 async function getCurrentStakeIndex(web3) {
-  const _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
+  let _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
 
   console.log("Current Stake Index:", _currentStakeMapIndex);
 

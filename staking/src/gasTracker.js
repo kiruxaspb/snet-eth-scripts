@@ -1,5 +1,6 @@
 const Web3 = require("web3");
 const config = require('./config/config.json');
+const fs = require("fs");
 
 const DELAY = 15000; // 15 sec
 const CALC_UTC_TIME = 10800000; // 3 hours
@@ -36,6 +37,7 @@ async function gas() {
   gasPrice = await web3.eth.getGasPrice();
 
   console.log('UTC:', universalTime, 'MSK:', moscowTime, 'IST:', indianTime, '| Gas base price:', gasPrice / config.WEI);
+  fs.appendFileSync('gaslog.txt', `\nUTC: ${ universalTime } | MSK: ${ moscowTime } | IST: ${ indianTime } | Gas base price: ${ gasPrice / config.WEI} GWEI`);
 }
 
 main();

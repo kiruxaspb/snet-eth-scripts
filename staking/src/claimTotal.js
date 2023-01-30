@@ -3,20 +3,18 @@ const { clear } = require("console");
 const smart = require('./smart/abi.json');
 const config = require('./config/config.json');
 
-
 const ABI = smart.abi;
-
 
 const web3 = new Web3(config.INFURA_API_KEY_MAINNET);
 const tokenStakeContract = new web3.eth.Contract(ABI, config.STAKE_CONTRACT_ADDRESS_MAINNET);
 
 
 async function main() {
-  getTotalClaimableAmount(web3);
+  totalClaimbaleAmount(web3);
 }
 
 
-async function getTotalClaimableAmount(web3) {
+async function totalClaimbaleAmount(web3) {
   let claimableAmountValue = 0;
   let stakers = await getStakers(web3);
   let stakeIndex = await getCurrentStakeIndex(web3);
@@ -43,7 +41,7 @@ async function getTotalClaimableAmount(web3) {
 
 /* function for get all stakers list */
 async function getStakers(web3) {
-  const stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
+  let stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
 
   console.log("Staker records:", stakeHolders.length);
 
@@ -53,7 +51,7 @@ async function getStakers(web3) {
 
 /* function for get value of current stake index */
 async function getCurrentStakeIndex(web3) {
-  const _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
+  let _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
 
   console.log("Current Stake Index:", _currentStakeMapIndex);
 
