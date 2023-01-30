@@ -1,12 +1,11 @@
 const Web3 = require("web3");
+const config = require('./config/config.json');
 
-const INFURA_API_KEY = 'https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f';
-const delay = 15000; // 15 sec
+const DELAY = 15000; // 15 sec
 const CALC_UTC_TIME = 10800000; // 3 hours
 const CALC_IST_TIME = 9000000; // 2 hours 30 minutes
-const WEI = 1000000000;
 
-const web3 = new Web3(INFURA_API_KEY);
+const web3 = new Web3(config.INFURA_API_KEY_MAINNET);
 
 
 async function main() {
@@ -18,7 +17,7 @@ async function gasChecker() {
   gas();
   setInterval(function() {
     gas();
-  }, delay);
+  }, DELAY);
 }
 
 
@@ -36,7 +35,7 @@ async function gas() {
   
   gasPrice = await web3.eth.getGasPrice();
 
-  console.log('UTC:', universalTime, 'MSK:', moscowTime, 'IST:', indianTime, '| Gas base price:', gasPrice / WEI)
+  console.log('UTC:', universalTime, 'MSK:', moscowTime, 'IST:', indianTime, '| Gas base price:', gasPrice / config.WEI);
 }
 
 main();

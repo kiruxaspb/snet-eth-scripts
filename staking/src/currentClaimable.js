@@ -1,14 +1,13 @@
 const Web3 = require("web3");
 const { clear } = require("console");
-const abi = require('./smart/abi.json');
+const smart = require('./smart/abi.json');
+const config = require('./config/config.json');
 
-const INFURA_API_KEY = 'https://mainnet.infura.io/v3/835c29b38fb544699de27051a0a7279f';
-const STAKE_CONTRACT_ADDRESS_MAINNET = '0x13e1367A455C45Aa736D7Ff2C5656bA2bD05AD46';
-const ABI = abi.abi;
-const TOKEN_DECIMALS = 100000000;
 
-const web3 = new Web3(INFURA_API_KEY);
-const tokenStakeContract = new web3.eth.Contract(ABI, STAKE_CONTRACT_ADDRESS_MAINNET);
+const ABI = smart.abi;
+
+const web3 = new Web3(config.INFURA_API_KEY_MAINNET);
+const tokenStakeContract = new web3.eth.Contract(ABI, config.STAKE_CONTRACT_ADDRESS_MAINNET);
 
 
 async function main() {
@@ -31,7 +30,7 @@ async function getCurrentClaimableAmount(web3) {
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
-  console.log('Claimable tokens after current window:', claimableAmountValue / TOKEN_DECIMALS, 'AGIX');
+  console.log('Claimable tokens after current window:', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
   }
 
 
@@ -60,7 +59,7 @@ async function getCurrentStakeIndex(web3) {
 async function getStakedAmount(web3) {
   let totalStakedAmount = await tokenStakeContract.methods.windowTotalStake().call();
 
-  console.log("Total staked:", totalStakedAmount / TOKEN_DECIMALS, "AGIX");
+  console.log("Total staked:", totalStakedAmount / config.TOKEN_DECIMALS, "AGIX");
   
   return totalStakedAmount;
 }
