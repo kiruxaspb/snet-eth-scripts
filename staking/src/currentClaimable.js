@@ -22,7 +22,7 @@ async function getCurrentClaimableAmount(web3) {
 
   for (let i = 0; i < stakers.length; i++) {
     // calc claimableAmount in current window, for claim in next time
-    let StakerInfo = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
+    let StakerInfo = await tokenStakeContract.methods.getStakeInfo(stakeIndex - 1, stakers[i]).call();
     claimableAmountValue += Number(StakerInfo.claimableAmount);
     
 
