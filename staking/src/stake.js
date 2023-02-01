@@ -51,9 +51,9 @@ async function stakeInfo(web3) {
   console.log('Active stakers:', stakersValue);
   console.log('----------------------------------------------------------');
   console.log('Staked above current window:', approvedAmountValue / config.TOKEN_DECIMALS, 'AGIX');
-  console.log('Staked in current window:', pendingApprovedAmountValue / config.TOKEN_DECIMALS);
-  console.log('Total staked fund in current window', (approvedAmountValue + pendingApprovedAmountValue) / config.TOKEN_DECIMALS, 'AGIX');
-  console.log('Total staked fund in current window...\n\t...after distribution reward:', Number(totalStaked) / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Staked in current window( ID:', stakeIndex,'):', pendingApprovedAmountValue / config.TOKEN_DECIMALS);
+  console.log('Total staked fund in current window( ID:', stakeIndex,'):', (approvedAmountValue + pendingApprovedAmountValue) / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Total staked fund in current window( ID:', stakeIndex,')...\n\t...after distribution reward:', Number(totalStaked) / config.TOKEN_DECIMALS, 'AGIX');
   console.log('----------------------------------------------------------\n');
 }
 

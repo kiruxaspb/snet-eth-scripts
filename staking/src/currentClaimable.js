@@ -30,7 +30,7 @@ async function currentClaimableAmount(web3) {
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
-  console.log('Claimable tokens in last window:', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Request for claim stake from last window ( ID:', stakeIndex - 1,'):', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
   }
 
 

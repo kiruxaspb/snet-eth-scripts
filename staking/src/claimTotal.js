@@ -18,24 +18,24 @@ async function totalClaimbaleAmount(web3) {
   let claimableAmountValue = 0;
   let stakers = await getStakers(web3);
   let stakeIndex = await getCurrentStakeIndex(web3);
+
   for (let i = 0; i < stakers.length; i++) {
- 
-  let stakerCheck = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
-    // if staker have any stake => dont search claim
-    if ( Number(stakerCheck.approvedAmount) == 0 && Number(stakerCheck.pendingForApprovalAmount) == 0) {
-      // checking claimalbeAmount in every stage window
-      for (let j = 0; j < stakeIndex; j++) {
-        let staker = await tokenStakeContract.methods.getStakeInfo(j, stakers[i]).call();
-        claimableAmountValue += Number(staker.claimableAmount);
+    let stakerCheck = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
+      // if staker have any stake => dont search claim
+      if ( Number(stakerCheck.approvedAmount) == 0 && Number(stakerCheck.pendingForApprovalAmount) == 0) {
+        // checking claimalbeAmount in every stage window
+        for (let j = 0; j < stakeIndex; j++) {
+          let staker = await tokenStakeContract.methods.getStakeInfo(j, stakers[i]).call();
+          claimableAmountValue += Number(staker.claimableAmount);
+        }
       }
-    }
 
     clear();
     let percent = (i/(stakers.length - 1)) * 100;
     console.log('Processing:', percent.toFixed(2), '%');
   }
 
-  console.log('Total claimable tokens:', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Not taken claimable tokens from all stake windows:', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
 }
 
 
