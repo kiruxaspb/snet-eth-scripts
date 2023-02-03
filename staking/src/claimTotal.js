@@ -10,14 +10,14 @@ const tokenStakeContract = new web3.eth.Contract(ABI, config.STAKE_CONTRACT_ADDR
 
 
 async function main() {
-  totalClaimbaleAmount(web3);
+  totalClaimbaleAmount();
 }
 
 
-async function totalClaimbaleAmount(web3) {
+async function totalClaimbaleAmount() {
   let claimableAmountValue = 0;
-  let stakers = await getStakers(web3);
-  let stakeIndex = await getCurrentStakeIndex(web3);
+  let stakers = await getStakers();
+  let stakeIndex = await getCurrentStakeIndex();
 
   for (let i = 0; i < stakers.length; i++) {
     let stakerCheck = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
@@ -40,7 +40,7 @@ async function totalClaimbaleAmount(web3) {
 
 
 /* function for get all stakers list */
-async function getStakers(web3) {
+async function getStakers() {
   let stakeHolders = await tokenStakeContract.methods.getStakeHolders().call();
 
   console.log("Staker records:", stakeHolders.length);
@@ -50,7 +50,7 @@ async function getStakers(web3) {
 
 
 /* function for get value of current stake index */
-async function getCurrentStakeIndex(web3) {
+async function getCurrentStakeIndex() {
   let _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
 
   console.log("Current Stake Index:", _currentStakeMapIndex);
@@ -60,7 +60,7 @@ async function getCurrentStakeIndex(web3) {
 
 
 /* get all staked value of AGIX Tokens */
-async function getStakedAmount(web3) {
+async function getStakedAmount() {
   let totalStakedAmount = await tokenStakeContract.methods.windowTotalStake().call();
 
   console.log("Total staked:", totalStakedAmount / config.TOKEN_DECIMALS, "AGIX");
