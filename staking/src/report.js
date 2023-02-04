@@ -13,7 +13,7 @@ const tokenContract = new web3.eth.Contract(agixTokenContractABI, config.AGIX_TO
 
 
 async function main() {
-  console.log('--- START SCRIPT ---');
+  console.log('Start script');
   stakeInfo();
 }
 
@@ -22,14 +22,24 @@ async function stakeInfo() {
   let stakersValue = 0;
   let approvedAmountValue = 0;
   let pendingApprovedAmountValue = 0;
-  
-  console.log('--- GETTING DATA ---');
+
+
+  console.log('\nGet staker list...');
   let stakers = await getStakers();
+
+  console.log('\nGet current stake index...');
   let stakeIndex = await getCurrentStakeIndex();
+
+  console.log('\nGet total staked amount...');
   let totalStaked = await getStakedAmount();
+
+  console.log('\nGet actual balance of stake smart contract...');
   let actualBalanceAGIX = await tokenStakeContractBalance();
 
+
   /* get all data about each staker */
+  console.log('\nGet staked above current window and in current window...');
+  console.log('The waiting time is ~ 7 minutes.\n');
   for (let i = 0; i < stakers.length; i++) {
     let staker = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
     let approvedAmount = Number(staker.approvedAmount);
@@ -40,26 +50,38 @@ async function stakeInfo() {
       pendingApprovedAmountValue += pendingApprovedAmount;
       stakersValue += 1;
     }
-
-    /* processing indicator */
-    clear();
-    let percent = (i/(stakers.length - 1)) * 100;
-    console.log('Processing:', percent.toFixed(2), '%');
   }
+  console.log('Staked above current window:', approvedAmountValue / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Staked in current window( ID:', stakeIndex,'):', pendingApprovedAmountValue / config.TOKEN_DECIMALS);
 
-  console.log('\nProcessing has been completed!\n');
 
-  console.log('----------------------------------------------------------');
+  console.log('\nGet claimable funds in last window...');
+  console.log('The waiting time is ~ 7 minutes.\n');
+  let claimableFundsLastWindow = await currentClaimableAmount();
+
+
+  console.log('\nGet total claimable funds...');
+  console.log('The waiting time is ~ 1 hour 40 minutes.\n');
+  let totalClaimbaleFunds = await totalClaimbaleAmount();
+
+  console.log('\nProcessing has been completed!\n\n');
+
+  console.log('--------------------------------REPORT------------------------------------');
   console.log('Stake window index:', stakeIndex);
   console.log('Staker records:', stakers.length);
   console.log('Active stakers:', stakersValue);
-  console.log('----------------------------------------------------------');
+  console.log('--------------------------------------------------------------------------');
   console.log('Staked above current window:', approvedAmountValue / config.TOKEN_DECIMALS, 'AGIX');
-  console.log('Staked in current window( ID:', stakeIndex,'):', pendingApprovedAmountValue / config.TOKEN_DECIMALS);
+  console.log('Staked in current window( ID:', stakeIndex,'):', pendingApprovedAmountValue / config.TOKEN_DECIMALS, 'AGIX');
   console.log('Total staked fund in current window( ID:', stakeIndex,'):', (approvedAmountValue + pendingApprovedAmountValue) / config.TOKEN_DECIMALS, 'AGIX');
-  console.log('Total staked fund in current window( ID:', stakeIndex,')...\n\t...after distribution reward:', Number(totalStaked) / config.TOKEN_DECIMALS, 'AGIX');
-  console.log('----------------------------------------------------------\n');
+  console.log('Total staked fund in current window( ID:', stakeIndex,')...\n\t...after distribution reward:', totalStaked / config.TOKEN_DECIMALS, 'AGIX');
+  console.log('Total claimable funds:', totalClaimbaleFunds, 'AGIX');
+  console.log('...of which in the last window:', claimableFundsLastWindow, 'AGIX');
+  console.log('------------------------------------------------------------------------');
   console.log('Actual balance tokens on stake contract:', actualBalanceAGIX, 'AGIX');
+  console.log('Current deficit of:', (totalStaked / config.TOKEN_DECIMALS) + totalClaimbaleFunds - actualBalanceAGIX, 'AGIX')
+  console.log('------------------------------------------------------------------------\n');
+   
 }
 
 
@@ -77,9 +99,9 @@ async function getStakers() {
 async function getCurrentStakeIndex() {
   let _currentStakeMapIndex = await tokenStakeContract.methods.currentStakeMapIndex().call();
 
-  console.log("Current Stake Index:", _currentStakeMapIndex);
+  console.log("Current Stake Index:", Number(_currentStakeMapIndex));
 
-  return _currentStakeMapIndex;
+  return Number(_currentStakeMapIndex);
 }
 
 
@@ -87,9 +109,9 @@ async function getCurrentStakeIndex() {
 async function getStakedAmount() {
   let totalStakedAmount = await tokenStakeContract.methods.windowTotalStake().call();
 
-  console.log("Total staked:", totalStakedAmount);
+  console.log("Total staked:", Number(totalStakedAmount) / config.TOKEN_DECIMALS, 'AGIX');
   
-  return totalStakedAmount;
+  return Number(totalStakedAmount);
 }
 
 
@@ -97,15 +119,52 @@ async function getStakedAmount() {
 async function tokenStakeContractBalance() {
   let fullAmountAgix = await tokenContract.methods.balanceOf(config.STAKE_CONTRACT_ADDRESS_MAINNET).call();
   let balance = Number(fullAmountAgix) / config.TOKEN_DECIMALS;
-  console.log('Actual balance of AGIX', balance);
+  console.log('Actual balance of contract:', balance, 'AGIX');
     
   return balance;
 }
 
-// TODO: separate func for total stake, stake in window, value of stakers
+
+/* get current window claimable tokens */
+async function currentClaimableAmount() {
+  let claimableAmountValue = 0;
+  let stakers = await getStakers();
+  let stakeIndex = await getCurrentStakeIndex();
+
+  for (let i = 0; i < stakers.length; i++) {
+    // calc claimableAmount in current window, for claim in next time
+    let StakerInfo = await tokenStakeContract.methods.getStakeInfo(stakeIndex - 1, stakers[i]).call();
+    claimableAmountValue += Number(StakerInfo.claimableAmount);
+  }
+
+  console.log('Request for claim stake from last window ( ID:', stakeIndex - 1,'):', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
+
+  return claimableAmountValue / config.TOKEN_DECIMALS;
+}
 
 
-// TODO: current window claimable tokens
-// TODO: total claimable tokens
+/* function for calc total claimable funds */
+async function totalClaimbaleAmount() {
+  let claimableAmountValue = 0;
+  let stakers = await getStakers();
+  let stakeIndex = await getCurrentStakeIndex();
+
+  for (let i = 0; i < stakers.length; i++) {
+    let stakerCheck = await tokenStakeContract.methods.getStakeInfo(stakeIndex, stakers[i]).call();
+      // if staker have any stake => dont search claim
+      if (Number(stakerCheck.approvedAmount) == 0 && Number(stakerCheck.pendingForApprovalAmount) == 0) {
+        // checking claimalbeAmount in every stage window
+        for (let j = 0; j < stakeIndex; j++) {
+          let staker = await tokenStakeContract.methods.getStakeInfo(j, stakers[i]).call();
+          claimableAmountValue += Number(staker.claimableAmount);
+        }
+      }
+  }
+
+  console.log('Not taken claimable tokens from all stake windows:', claimableAmountValue / config.TOKEN_DECIMALS, 'AGIX');
+
+  return claimableAmountValue / config.TOKEN_DECIMALS;
+}
+
 
 main();

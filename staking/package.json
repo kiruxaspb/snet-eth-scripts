@@ -1,9 +1,10 @@
 {
   "name": "scripts",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "report": "node ./src/report.js",
     "stake": "node ./src/stake.js",
     "claim": "node ./src/claimTotal.js",
     "currentClaim": "node ./src/currentClaimable.js",
