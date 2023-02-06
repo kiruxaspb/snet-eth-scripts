@@ -30,3 +30,18 @@ npm run currentClaim
 ```
 npm run gas
 ```
+
+OPTIONAL:
+```
+npm install pm2 -g
+```
+PM2 is a daemon process manager that will help you manage and keep your application.
+Using this for 24/7 work script
+
+```
+cd staking/src/
+pm2 start gas.js
+```
+```
+pm2 stop gas.js (OR [ID Process])
+```
