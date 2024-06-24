@@ -13,6 +13,6 @@
   "author": "https://github.com/kiruxaspb",
   "license": "MIT",
   "dependencies": {
-    "web3": "^1.8.1"
+    "web3": "^4.10.0"
   }
 }
